@@ -2,15 +2,15 @@
 
 namespace App\Schedule\Dictionaries;
 
-use App\Jobs\Dictionaries\FetchLeadsPipelinesJob;
+use App\Jobs\Dictionaries\FetchUsersJob;
 use Illuminate\Support\Facades\Log;
 
-class FetchLeadsPipelines
+class FetchUsers
 {
     public function __invoke()
     {
         Log::info(__METHOD__); //DELETE
 
-        FetchLeadsPipelinesJob::dispatch();
+        FetchUsersJob::dispatch();
     }
 }
