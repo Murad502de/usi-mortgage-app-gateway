@@ -2,24 +2,24 @@
 
 namespace App\Schedule\Dictionaries;
 
-use App\Models\Dictionaries\LeadsPipelinesDictionary;
+use App\Jobs\Dictionaries\FetchLeadsPipelinesJob;
 use Illuminate\Support\Facades\Log;
 
 class FetchLeadsPipelines
 {
-    private $leadsPipelinesDictionary;
-
-    public function __construct()
-    {
-        Log::info(__METHOD__); //DELETE
-
-        $this->leadsPipelinesDictionary = new LeadsPipelinesDictionary();
-    }
-
     public function __invoke()
     {
         Log::info(__METHOD__); //DELETE
 
-        $this->leadsPipelinesDictionary->fetchPipelines();
+        FetchLeadsPipelinesJob::dispatch();
+        // FetchLeadsPipelinesJob::dispatch();
+        // FetchLeadsPipelinesJob::dispatch();
+        // FetchLeadsPipelinesJob::dispatch();
+        // FetchLeadsPipelinesJob::dispatch();
+        // FetchLeadsPipelinesJob::dispatch();
+        // FetchLeadsPipelinesJob::dispatch();
+        // FetchLeadsPipelinesJob::dispatch();
+        // FetchLeadsPipelinesJob::dispatch();
+        // FetchLeadsPipelinesJob::dispatch();
     }
 }

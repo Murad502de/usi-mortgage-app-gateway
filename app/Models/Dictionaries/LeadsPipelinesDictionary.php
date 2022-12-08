@@ -15,7 +15,7 @@ class LeadsPipelinesDictionary extends Model
         Log::info(__METHOD__); //DELETE
     }
 
-    public function fetchPipelines()
+    public static function fetchPipelines()
     {
         Log::info(__METHOD__); //DELETE
     }

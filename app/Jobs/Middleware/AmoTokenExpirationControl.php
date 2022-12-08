@@ -8,21 +8,17 @@ use Illuminate\Support\Facades\Log;
 
 class AmoTokenExpirationControl
 {
-    /**
-     * Process the job in the queue.
-     *
-     * @param  mixed  $job
-     * @param  callable  $next
-     * @return mixed
-     */
     public function handle($job, $next)
     {
         $client   = new amoClient();
         $authData = amoCRM::getAuthData();
 
         if ($authData) {
+            Log::info(__METHOD__, ['AmoTokenExpirationControl']); //DELETE
+            Log::info(__METHOD__, [json_encode($authData)]); //DELETE
+
             if (time() >= (int) $authData['when_expires']) {
-                // Log::info(__METHOD__, ['access token expired']); //DELETE
+                Log::info(__METHOD__, ['access token expired']); //DELETE
 
                 $response = $client->accessTokenUpdate($authData);
 
@@ -40,21 +36,21 @@ class AmoTokenExpirationControl
 
                     amoCRM::auth($accountData);
 
-                    // Log::info(__METHOD__, ['access token updated']); //DELETE
+                    Log::info(__METHOD__, ['access token updated']); //DELETE
 
                     $next($job);
                 } else {
-                    // Log::info(__METHOD__, ['Login error with code: ' . $response['code']]); //DELETE
+                    Log::info(__METHOD__, ['Login error with code: ' . $response['code']]); //DELETE
 
                     $job->release();
                 }
             } else {
-                // Log::info(__METHOD__, ['access token ist not expired']); //DELETE
+                Log::info(__METHOD__, ['access token ist not expired']); //DELETE
 
                 $next($job);
             }
         } else {
-            // Log::info(__METHOD__, ['Login data not found']); //DELETE
+            Log::info(__METHOD__, ['Login data not found']); //DELETE
 
             $job->release();
         }
