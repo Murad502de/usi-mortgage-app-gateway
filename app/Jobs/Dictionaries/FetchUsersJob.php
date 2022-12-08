@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Dictionaries;
 
+use App\Jobs\Middleware\AmoTokenExpirationControl;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -21,5 +22,10 @@ class FetchUsersJob implements ShouldQueue
     public function handle()
     {
         Log::info(__METHOD__); //DELETE
+    }
+
+    public function middleware()
+    {
+        return [new AmoTokenExpirationControl];
     }
 }
