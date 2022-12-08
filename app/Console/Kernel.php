@@ -10,18 +10,12 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * Define the application's command schedule.
-     *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
-     */
     protected function schedule(Schedule $schedule)
     {
         $schedule->call(new FetchLeadsPipelines)
             ->name('fetch_leads_pipelines')
             ->withoutOverlapping()
-            ->everyMinute();
+            ->everyMinute(); //TODO: every 5 min
 
         // $schedule->call(new ParseRecentWebhooks)
         //     ->name('parse_recent_webhooks')
@@ -32,11 +26,6 @@ class Kernel extends ConsoleKernel
         //     ->everyMinute();
     }
 
-    /**
-     * Register the commands for the application.
-     *
-     * @return void
-     */
     protected function commands()
     {
         $this->load(__DIR__ . '/Commands');
