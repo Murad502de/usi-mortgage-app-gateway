@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Dictionaries\LeadsPipelinesDictionaryController;
+use App\Http\Controllers\Api\Dictionaries\LeadsUsersDictionaryController;
 use App\Http\Controllers\Api\Services\AmoCrm\AmoCrmAuthController;
 use App\Http\Controllers\Api\Webhooks\LeadWebhookController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('dictionaries')->group(function () {
         Route::prefix('leads')->group(function () {
             Route::get('pipelines', [LeadsPipelinesDictionaryController::class, 'pipelines']);
+            Route::get('pipelines', [LeadsUsersDictionaryController::class, 'users']);
         });
     });
 });
