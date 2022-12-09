@@ -25,7 +25,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('dictionaries')->group(function () {
         Route::prefix('leads')->group(function () {
             Route::get('pipelines', [LeadsPipelinesDictionaryController::class, 'pipelines']);
-            Route::get('pipelines', [LeadsUsersDictionaryController::class, 'users']);
+            Route::get('users', [LeadsUsersDictionaryController::class, 'users']);
         });
     });
 });
