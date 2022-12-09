@@ -16,6 +16,7 @@ class CreateLeadsStagesDictionariesTable extends Migration
         Schema::create('leads_stages_dictionaries', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('uuid')->nullable()->index();
             $table->bigInteger('amo_id');
             $table->string('name');
             $table->foreignId('leads_pipelines_dictionary_id')->nullable()->constrained()->cascadeOnDelete()->index();

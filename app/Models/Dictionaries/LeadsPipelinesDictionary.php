@@ -6,16 +6,19 @@ use App\Models\Services\amoCRM;
 use App\Services\amoAPI\amoAPIHub;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Model\generateUuid;
 
 // use Illuminate\Support\Facades\Log;
 
 class LeadsPipelinesDictionary extends Model
 {
     use HasFactory;
+    use generateUuid;
 
     protected $fillable = [
         'amo_id',
         'name',
+        'uuid',
     ];
 
     public static function fetchPipelines()

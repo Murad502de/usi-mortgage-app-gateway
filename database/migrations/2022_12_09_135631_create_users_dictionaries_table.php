@@ -16,6 +16,7 @@ class CreateUsersDictionariesTable extends Migration
         Schema::create('users_dictionaries', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('uuid')->nullable()->index();
             $table->bigInteger('amo_id');
             $table->string('name');
         });

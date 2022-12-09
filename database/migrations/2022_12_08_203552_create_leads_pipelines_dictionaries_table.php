@@ -16,6 +16,7 @@ class CreateLeadsPipelinesDictionariesTable extends Migration
         Schema::create('leads_pipelines_dictionaries', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('uuid')->nullable()->index();
             $table->bigInteger('amo_id');
             $table->string('name');
         });
