@@ -15,11 +15,6 @@ class FetchLeadsPipelinesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct()
-    {
-        Log::info(__METHOD__); //DELETE
-    }
-
     public function handle()
     {
         Log::info(__METHOD__); //DELETE
