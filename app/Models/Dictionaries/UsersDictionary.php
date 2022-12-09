@@ -4,9 +4,9 @@ namespace App\Models\Dictionaries;
 
 use App\Models\Services\amoCRM;
 use App\Services\amoAPI\amoAPIHub;
+use App\Traits\Model\generateUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Model\generateUuid;
 
 // use Illuminate\Support\Facades\Log;
 
@@ -19,6 +19,11 @@ class UsersDictionary extends Model
         'amo_id',
         'name',
         'uuid',
+    ];
+    protected $hidden = [
+        'id',
+        'created_at',
+        'updated_at',
     ];
 
     public static function fetchUsers()

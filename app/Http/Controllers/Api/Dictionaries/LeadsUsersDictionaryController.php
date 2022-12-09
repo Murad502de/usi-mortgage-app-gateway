@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Api\Dictionaries;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Resources\Dictionaries\UsersDictionaryResource;
+use App\Models\Dictionaries\UsersDictionary;
 use Illuminate\Support\Facades\Log;
 
 class LeadsUsersDictionaryController extends Controller
@@ -12,6 +13,8 @@ class LeadsUsersDictionaryController extends Controller
     {
         Log::info(__METHOD__); //DELETE
 
-        return true;
+        $users = UsersDictionary::all();
+
+        return UsersDictionaryResource::collection($users);
     }
 }
