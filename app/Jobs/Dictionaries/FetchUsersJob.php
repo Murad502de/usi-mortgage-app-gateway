@@ -3,6 +3,7 @@
 namespace App\Jobs\Dictionaries;
 
 use App\Jobs\Middleware\AmoTokenExpirationControl;
+use App\Models\Dictionaries\UsersDictionary;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -14,14 +15,11 @@ class FetchUsersJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct()
-    {
-        Log::info(__METHOD__); //DELETE
-    }
-
     public function handle()
     {
         Log::info(__METHOD__); //DELETE
+
+        UsersDictionary::fetchUsers();
     }
 
     public function middleware()

@@ -14,6 +14,7 @@ Route::prefix('v1')->group(function () {
             Route::post('change-stage', [LeadWebhookController::class, 'changeStage']);
         });
     });
+
     Route::prefix('services')->group(function () {
         Route::prefix('amocrm')->group(function () {
             Route::prefix('auth')->group(function () {
@@ -22,10 +23,11 @@ Route::prefix('v1')->group(function () {
             });
         });
     });
+
     Route::prefix('dictionaries')->group(function () {
+        Route::get('users', [LeadsUsersDictionaryController::class, 'users']);
         Route::prefix('leads')->group(function () {
             Route::get('pipelines', [LeadsPipelinesDictionaryController::class, 'pipelines']);
-            Route::get('users', [LeadsUsersDictionaryController::class, 'users']);
         });
     });
 });

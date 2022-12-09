@@ -13,10 +13,11 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(new FetchLeadsPipelines)
-            ->name('fetch_leads_pipelines_dictionary')
-            ->withoutOverlapping()
-            ->everyMinute(); //TODO: every 5 min
+        // $schedule->call(new FetchLeadsPipelines)
+        //     ->name('fetch_leads_pipelines_dictionary')
+        //     ->withoutOverlapping()
+        //     ->everyMinute(); //TODO: every 5 min
+
         $schedule->call(new FetchUsers)
             ->name('fetch_users_dictionary')
             ->withoutOverlapping()
