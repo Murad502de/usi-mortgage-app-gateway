@@ -20,6 +20,11 @@ class LeadsPipelinesDictionary extends Model
         'name',
         'uuid',
     ];
+    protected $hidden = [
+        'id',
+        'created_at',
+        'updated_at',
+    ];
 
     public static function fetchPipelines()
     {
@@ -56,5 +61,10 @@ class LeadsPipelinesDictionary extends Model
                 }
             }
         }
+    }
+
+    public function stages()
+    {
+        return $this->hasMany(LeadsStagesDictionary::class);
     }
 }

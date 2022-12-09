@@ -17,4 +17,15 @@ class LeadsStagesDictionary extends Model
         'leads_pipelines_dictionary_id',
         'uuid',
     ];
+    protected $hidden = [
+        'id',
+        'created_at',
+        'updated_at',
+        'leads_pipelines_dictionary_id',
+    ];
+
+    public function pipeline()
+    {
+        return $this->belongsTo(LeadsPipelinesDictionary::class);
+    }
 }
