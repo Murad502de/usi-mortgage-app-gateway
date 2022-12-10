@@ -13,11 +13,11 @@ use Illuminate\Support\Facades\Log;
 
 class MortgageController extends Controller
 {
-    public function index(Request $request): MortgagesResource
+    public function index(Request $request)
     {
         Log::info(__METHOD__); //DELETE
 
-        return new MortgagesResource(Mortgage::all());
+        return MortgagesResource::collection(Mortgage::all());
     }
     public function create(MortgageCreateRequest $request)
     {
