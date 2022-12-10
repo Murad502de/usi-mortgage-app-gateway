@@ -9,40 +9,34 @@ use App\Http\Resources\Mortgage\MortgageResource;
 use App\Http\Resources\Mortgage\MortgagesResource;
 use App\Models\Mortgage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Response;
 
 class MortgageController extends Controller
 {
     public function index(Request $request)
     {
-        Log::info(__METHOD__); //DELETE
-
         return MortgagesResource::collection(Mortgage::all());
     }
     public function create(MortgageCreateRequest $request)
     {
-        Log::info(__METHOD__, $request->all()); //DELETE
+        $mortgage = Mortgage::createMortgage($request->all());
 
-        Mortgage::createMortgage($request->all());
-
-        return true;
+        return $mortgage ? $mortgage->uuid : null;
     }
     public function get(Mortgage $mortgage): MortgageResource
     {
-        Log::info(__METHOD__); //DELETE
-
         return new MortgageResource($mortgage);
     }
     public function update(Mortgage $mortgage, MortgageUpdateRequest $request)
     {
-        Log::info(__METHOD__); //DELETE
+        $mortgage->update($request->all());
 
-        return true;
+        return response()->json(['message' => 'success by update'], Response::HTTP_OK);
     }
     public function delete(Mortgage $mortgage)
     {
-        Log::info(__METHOD__); //DELETE
+        $mortgage->delete();
 
-        return true;
+        return response()->json(['message' => 'success by delete'], Response::HTTP_OK);
     }
 }
