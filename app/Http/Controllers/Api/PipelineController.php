@@ -29,7 +29,7 @@ class PipelineController extends Controller
     }
     public function update(Pipeline $pipeline, PipelineUpdateRequest $request)
     {
-        $pipeline->update($request->all());
+        $pipeline->updatePipeline($request->all());
 
         return response()->json(['message' => 'success by update'], Response::HTTP_OK);
     }

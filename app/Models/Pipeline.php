@@ -27,6 +27,14 @@ class Pipeline extends Model
     {
         return $this->belongsTo(Mortgage::class);
     }
+    public function updatePipeline(array $pipeline)
+    {
+        $mortgage = Mortgage::getByUuid($pipeline['mortgage_uuid']);
+
+        return self::update(array_merge($pipeline, [
+            'mortgage_id' => $mortgage ? $mortgage->id : null,
+        ]));
+    }
     public static function createdPipeline(array $pipeline): ?Pipeline
     {
         $mortgage = Mortgage::getByUuid($pipeline['mortgage_uuid']);
