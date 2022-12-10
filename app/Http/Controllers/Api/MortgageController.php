@@ -21,7 +21,9 @@ class MortgageController extends Controller
     }
     public function create(MortgageCreateRequest $request)
     {
-        Log::info(__METHOD__); //DELETE
+        Log::info(__METHOD__, $request->all()); //DELETE
+
+        Mortgage::createMortgage($request->all());
 
         return true;
     }
