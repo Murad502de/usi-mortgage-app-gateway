@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\PipelineController;
 use App\Http\Controllers\Api\Services\AmoCrm\AmoCrmAuthController;
 use App\Http\Controllers\Api\Webhooks\LeadWebhookController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ConfigController;
 
 Route::prefix('v1')->group(function () {
     Route::prefix('webhooks')->group(function () {
@@ -31,6 +32,10 @@ Route::prefix('v1')->group(function () {
         Route::prefix('leads')->group(function () {
             Route::get('pipelines', [LeadsPipelinesDictionaryController::class, 'pipelines']);
         });
+    });
+
+    Route::prefix('config')->group(function () {
+        Route::get('/leadcard', [ConfigController::class, 'leadcard']);
     });
 
     Route::prefix('mortgages')->group(function () {
