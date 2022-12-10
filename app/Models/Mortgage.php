@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Mortgage extends Model
 {
     use HasFactory;
+
+    public function pipelines()
+    {
+        return $this->hasMany(Pipeline::class);
+    }
 }

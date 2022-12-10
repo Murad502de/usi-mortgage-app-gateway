@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Pipeline extends Model
 {
     use HasFactory;
+
+    public function mortgage()
+    {
+        return $this->belongsTo(Mortgage::class);
+    }
 }
