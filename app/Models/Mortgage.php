@@ -30,12 +30,15 @@ class Mortgage extends Model
     {
         return $this->hasMany(Pipeline::class);
     }
-
-    public static function createMortgage(array $mortgage): Mortgage
+    public static function createMortgage(array $mortgage): ?Mortgage
     {
         return self::create(array_merge($mortgage, [
             'amo_mortgage_before_applying_stage_ids' => json_encode($mortgage['amo_mortgage_before_applying_stage_ids']),
             'amo_mortgage_after_applying_stage_ids'  => json_encode($mortgage['amo_mortgage_after_applying_stage_ids']),
         ]));
+    }
+    public static function getByUuid(string $uuid): ?Mortgage
+    {
+        return self::whereUuid($uuid)->first();
     }
 }
