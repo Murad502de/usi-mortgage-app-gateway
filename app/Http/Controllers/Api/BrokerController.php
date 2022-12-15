@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Broker\BrokerCreateRequest;
 use App\Http\Requests\Api\Broker\BrokerUpdateRequest;
+use App\Http\Resources\Broker\BrokerResource;
+use App\Http\Resources\Broker\BrokersResource;
 use App\Models\Broker;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
