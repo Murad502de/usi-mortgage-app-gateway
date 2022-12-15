@@ -53,4 +53,12 @@ Route::prefix('v1')->group(function () {
         Route::put('/{pipeline:uuid}/update', [PipelineController::class, 'update']);
         Route::delete('/{pipeline:uuid}/delete', [PipelineController::class, 'delete']);
     });
+
+    Route::prefix('broker')->group(function () {
+        Route::get('/', [PipelineController::class, 'index']);
+        Route::post('/', [PipelineController::class, 'create']);
+        Route::get('/{pipeline:uuid}', [PipelineController::class, 'get']);
+        Route::put('/{pipeline:uuid}/update', [PipelineController::class, 'update']);
+        Route::delete('/{pipeline:uuid}/delete', [PipelineController::class, 'delete']);
+    });
 });
