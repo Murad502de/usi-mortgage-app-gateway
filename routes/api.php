@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\BrokerController;
+use App\Http\Controllers\Api\ConfigController;
 use App\Http\Controllers\Api\Dictionaries\LeadsPipelinesDictionaryController;
 use App\Http\Controllers\Api\Dictionaries\LeadsUsersDictionaryController;
 use App\Http\Controllers\Api\MortgageController;
@@ -7,7 +9,6 @@ use App\Http\Controllers\Api\PipelineController;
 use App\Http\Controllers\Api\Services\AmoCrm\AmoCrmAuthController;
 use App\Http\Controllers\Api\Webhooks\LeadWebhookController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ConfigController;
 
 Route::prefix('v1')->group(function () {
     Route::prefix('webhooks')->group(function () {
@@ -55,10 +56,10 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::prefix('broker')->group(function () {
-        Route::get('/', [PipelineController::class, 'index']);
-        Route::post('/', [PipelineController::class, 'create']);
-        Route::get('/{pipeline:uuid}', [PipelineController::class, 'get']);
-        Route::put('/{pipeline:uuid}/update', [PipelineController::class, 'update']);
-        Route::delete('/{pipeline:uuid}/delete', [PipelineController::class, 'delete']);
+        Route::get('/', [BrokerController::class, 'index']);
+        Route::post('/', [BrokerController::class, 'create']);
+        Route::get('/{broker:uuid}', [BrokerController::class, 'get']);
+        Route::put('/{broker:uuid}/update', [BrokerController::class, 'update']);
+        Route::delete('/{broker:uuid}/delete', [BrokerController::class, 'delete']);
     });
 });
