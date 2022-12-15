@@ -31,11 +31,11 @@ class Pipeline extends Model
     {
         $mortgage = Mortgage::getByUuid($pipeline['mortgage_uuid']);
 
-        return self::update(array_merge($pipeline, [
+        return $this->update(array_merge($pipeline, [
             'mortgage_id' => $mortgage ? $mortgage->id : null,
         ]));
     }
-    public static function createdPipeline(array $pipeline): ?Pipeline
+    public static function createPipeline(array $pipeline): ?Pipeline
     {
         $mortgage = Mortgage::getByUuid($pipeline['mortgage_uuid']);
 

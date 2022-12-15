@@ -19,7 +19,7 @@ class BrokerController extends Controller
     }
     public function create(BrokerCreateRequest $request)
     {
-        $pipeline = Broker::createdBroker(($request->all()));
+        $pipeline = Broker::createBroker(($request->all()));
 
         return $pipeline ? $pipeline->uuid : null;
     }

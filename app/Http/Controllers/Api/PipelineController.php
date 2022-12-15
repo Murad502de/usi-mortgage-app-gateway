@@ -19,7 +19,7 @@ class PipelineController extends Controller
     }
     public function create(PipelineCreateRequest $request)
     {
-        $pipeline = Pipeline::createdPipeline(($request->all()));
+        $pipeline = Pipeline::createPipeline(($request->all()));
 
         return $pipeline ? $pipeline->uuid : null;
     }

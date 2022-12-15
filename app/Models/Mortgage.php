@@ -18,6 +18,7 @@ class Mortgage extends Model
         'amo_mortgage_applying_stage_id',
         'amo_mortgage_before_applying_stage_ids',
         'amo_mortgage_after_applying_stage_ids',
+        'amo_user_ids',
         'amo_mortgage_approved_stage_id',
     ];
     protected $hidden = [
@@ -30,15 +31,28 @@ class Mortgage extends Model
     {
         return $this->hasMany(Pipeline::class);
     }
+    public function brokers()
+    {
+        return $this->hasMany(Broker::class);
+    }
     public static function createMortgage(array $mortgage): ?Mortgage
     {
         return self::create(array_merge($mortgage, [
             'amo_mortgage_before_applying_stage_ids' => json_encode($mortgage['amo_mortgage_before_applying_stage_ids']),
             'amo_mortgage_after_applying_stage_ids'  => json_encode($mortgage['amo_mortgage_after_applying_stage_ids']),
+            'amo_user_ids'                           => json_encode($mortgage['amo_user_ids']),
         ]));
     }
     public static function getByUuid(string $uuid): ?Mortgage
     {
         return self::whereUuid($uuid)->first();
+    }
+    public function updateMortgage(array $mortgage)
+    {
+        return $this->update(array_merge($mortgage, [
+            'amo_mortgage_before_applying_stage_ids' => json_encode($mortgage['amo_mortgage_before_applying_stage_ids']),
+            'amo_mortgage_after_applying_stage_ids'  => json_encode($mortgage['amo_mortgage_after_applying_stage_ids']),
+            'amo_user_ids'                           => json_encode($mortgage['amo_user_ids']),
+        ]));
     }
 }

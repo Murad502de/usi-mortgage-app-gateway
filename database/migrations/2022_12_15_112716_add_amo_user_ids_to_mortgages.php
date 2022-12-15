@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBrokersTable extends Migration
+class AddAmoUserIdsToMortgages extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateBrokersTable extends Migration
      */
     public function up()
     {
-        Schema::create('brokers', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->string('uuid')->nullable()->index();
+        Schema::table('mortgages', function (Blueprint $table) {
             $table->json('amo_user_ids');
-            $table->foreignId('mortgage_id')->constrained()->cascadeOnDelete()->nullable();
         });
     }
 
@@ -29,6 +25,8 @@ class CreateBrokersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('brokers');
+        Schema::table('mortgages', function (Blueprint $table) {
+            $table->dropColumn('amo_user_ids');
+        });
     }
 }
