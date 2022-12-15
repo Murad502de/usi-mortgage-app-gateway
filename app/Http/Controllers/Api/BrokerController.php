@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Broker\BrokerCreateRequest;
+use App\Http\Requests\Api\Broker\BrokerUpdateRequest;
+use App\Models\Broker;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Models\Broker;
 
 class BrokerController extends Controller
 {
