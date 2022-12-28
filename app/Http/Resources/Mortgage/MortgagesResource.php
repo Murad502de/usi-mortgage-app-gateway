@@ -20,10 +20,11 @@ class MortgagesResource extends JsonResource
             $pipelines[] = array_diff_key($pipeline->toArray(), ['mortgage_id' => '']);
         }
 
-        return array_merge(parent::toArray($request), [
+        return array_diff_key(array_merge(parent::toArray($request), [
             'amo_mortgage_before_applying_stage_ids' => json_decode($this->amo_mortgage_before_applying_stage_ids),
             'amo_mortgage_after_applying_stage_ids'  => json_decode($this->amo_mortgage_after_applying_stage_ids),
+            'brokers'                                => json_decode($this->amo_user_ids) ?? [],
             'pipelines'                              => $pipelines,
-        ]);
+        ]), ['amo_user_ids' => '']);
     }
 }
