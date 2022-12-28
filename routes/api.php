@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\BrokerController;
 use App\Http\Controllers\Api\ConfigController;
 use App\Http\Controllers\Api\Dictionaries\LeadsPipelinesDictionaryController;
 use App\Http\Controllers\Api\Dictionaries\LeadsUsersDictionaryController;
+use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\MortgageController;
 use App\Http\Controllers\Api\PipelineController;
 use App\Http\Controllers\Api\Services\AmoCrm\AmoCrmAuthController;
@@ -61,5 +62,13 @@ Route::prefix('v1')->group(function () {
         Route::get('/{broker:uuid}', [BrokerController::class, 'get']);
         Route::put('/{broker:uuid}/update', [BrokerController::class, 'update']);
         Route::delete('/{broker:uuid}/delete', [BrokerController::class, 'delete']);
+    });
+
+    Route::prefix('leads')->group(function () {
+        Route::get('/', [LeadController::class, 'index']);
+        Route::post('/', [LeadController::class, 'create']);
+        Route::get('/{lead:uuid}', [LeadController::class, 'get']);
+        Route::put('/{lead:uuid}/update', [LeadController::class, 'update']);
+        Route::delete('/{lead:uuid}/delete', [LeadController::class, 'delete']);
     });
 });
