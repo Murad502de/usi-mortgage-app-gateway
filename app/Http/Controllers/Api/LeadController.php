@@ -10,6 +10,7 @@ use App\Http\Resources\Lead\LeadsResource;
 use App\Models\Lead;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class LeadController extends Controller
 {
@@ -23,9 +24,11 @@ class LeadController extends Controller
 
         return $mortgage ? $mortgage->uuid : null;
     }
-    public function get(Lead $mortgage): LeadResource
+    public function get(Lead $lead): LeadResource
     {
-        return new LeadResource($mortgage);
+        Log::info(__METHOD__, [$lead]); //DELETE
+
+        return new LeadResource($lead);
     }
     public function update(Lead $mortgage, LeadUpdateRequest $request)
     {

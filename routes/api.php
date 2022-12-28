@@ -54,6 +54,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/{pipeline:uuid}', [PipelineController::class, 'get']);
         Route::put('/{pipeline:uuid}/update', [PipelineController::class, 'update']);
         Route::delete('/{pipeline:uuid}/delete', [PipelineController::class, 'delete']);
+        Route::get('id/{pipeline:amo_pipeline_id}', [PipelineController::class, 'get']);
     });
 
     Route::prefix('brokers')->group(function () {
@@ -67,8 +68,8 @@ Route::prefix('v1')->group(function () {
     Route::prefix('leads')->group(function () {
         Route::get('/', [LeadController::class, 'index']);
         Route::post('/', [LeadController::class, 'create']);
-        Route::get('/{lead:uuid}', [LeadController::class, 'get']);
-        Route::put('/{lead:uuid}/update', [LeadController::class, 'update']);
-        Route::delete('/{lead:uuid}/delete', [LeadController::class, 'delete']);
+        Route::get('/{lead:amo_id}', [LeadController::class, 'get']);
+        Route::put('/{lead:amo_id}/update', [LeadController::class, 'update']);
+        Route::delete('/{lead:amo_id}/delete', [LeadController::class, 'delete']);
     });
 });
