@@ -29,7 +29,11 @@ class MortgageController extends Controller
     }
     public function update(Mortgage $mortgage, MortgageUpdateRequest $request)
     {
-        $mortgage->update($request->all());
+        $mortgage->update(array_merge($request->all(), [
+            'amo_mortgage_before_applying_stage_ids' => json_encode($request->amo_mortgage_before_applying_stage_ids),
+            'amo_mortgage_after_applying_stage_ids'  => json_encode($request->amo_mortgage_after_applying_stage_ids),
+            'amo_user_ids'                           => json_encode($request->brokers), //FIXME: name must be changed to 'amo_user_ids' at front-side of the app
+        ]));
 
         return response()->json(['message' => 'success by update'], Response::HTTP_OK);
     }

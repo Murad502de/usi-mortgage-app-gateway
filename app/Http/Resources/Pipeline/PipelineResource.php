@@ -17,10 +17,11 @@ class PipelineResource extends JsonResource
         $mortgage = $this->mortgage()->first();
 
         return array_diff_key(array_merge(parent::toArray($request), [
-            'mortgage' => array_merge($mortgage->toArray(), [
+            'mortgage' => array_diff_key(array_merge($mortgage->toArray(), [
                 'amo_mortgage_before_applying_stage_ids' => json_decode($mortgage->amo_mortgage_before_applying_stage_ids),
                 'amo_mortgage_after_applying_stage_ids'  => json_decode($mortgage->amo_mortgage_after_applying_stage_ids),
-            ]),
+                'brokers'                                => json_decode($mortgage->amo_user_ids),
+            ]), ['amo_user_ids' => '']),
         ]), ['mortgage_id' => '']);
     }
 }

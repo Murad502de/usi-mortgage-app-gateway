@@ -20,9 +20,9 @@ class LeadController extends Controller
     }
     public function create(LeadCreateRequest $request)
     {
-        $mortgage = Lead::createLead($request->all());
+        $lead = Lead::createLead($request->all());
 
-        return $mortgage ? $mortgage->uuid : null;
+        return $lead ? $lead->uuid : null;
     }
     public function get(Lead $lead): LeadResource
     {
@@ -30,15 +30,15 @@ class LeadController extends Controller
 
         return new LeadResource($lead);
     }
-    public function update(Lead $mortgage, LeadUpdateRequest $request)
+    public function update(Lead $lead, LeadUpdateRequest $request)
     {
-        $mortgage->update($request->all());
+        $lead->update($request->all());
 
         return response()->json(['message' => 'success by update'], Response::HTTP_OK);
     }
-    public function delete(Lead $mortgage)
+    public function delete(Lead $lead)
     {
-        $mortgage->delete();
+        $lead->delete();
 
         return response()->json(['message' => 'success by delete'], Response::HTTP_OK);
     }
