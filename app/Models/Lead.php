@@ -44,4 +44,6 @@ class Lead extends Model
     {
         return $this->update(array_merge($lead, []));
     }
+
+    /* METHODS */
 }
