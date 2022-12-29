@@ -447,9 +447,6 @@ class amoAPIHub
                     ];
                     break;
 
-                /*case '' :
-                break;*/
-
                 default:
                     $tmpCf = false;
                     break;

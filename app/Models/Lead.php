@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Services\amoCRM;
+use App\Services\amoAPI\amoAPIHub;
 use App\Traits\Model\generateUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Response;
 
 class Lead extends Model
 {
     use HasFactory;
     use generateUuid;
+
+    public static $AMO_API = null;
 
     protected $fillable = [
         'uuid',
@@ -32,9 +38,16 @@ class Lead extends Model
     }
 
     /* CRUD METHODS */
-    public static function createLead(array $lead): ?Lead
+    public static function createLead(array $params): ?Lead
     {
-        return self::create(array_merge($lead, []));
+        Log::info(__METHOD__, [$params]); //DELETE
+
+        self::$AMO_API = new amoAPIHub(amoCRM::getAuthData());
+
+        $lead = self::fetchLeadById($params['lead_amo_id']);
+
+        return null;
+        // return self::create(array_merge($lead, []));
     }
     public static function getByUuid(string $uuid): ?Lead
     {
@@ -46,4 +59,13 @@ class Lead extends Model
     }
 
     /* METHODS */
+    public static function fetchLeadById(int $id) {
+        Log::info(__METHOD__, [$id]); //DELETE
+
+        $findLeadByIdResponse = self::$AMO_API->findLeadById($id);
+
+        dump($findLeadByIdResponse); //DELETE
+
+        // if ($findLeadByIdResponse['code'] !== Response::HTTP_OK) {}
+    }
 }

@@ -65,7 +65,7 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{broker:uuid}/delete', [BrokerController::class, 'delete']);
     });
 
-    Route::prefix('leads')->group(function () {
+    Route::prefix('leads')->middleware('auth.amocrm.token')->group(function () {
         Route::get('/', [LeadController::class, 'index']);
         Route::post('/', [LeadController::class, 'create']);
         Route::get('/{lead:amo_id}', [LeadController::class, 'get']);
