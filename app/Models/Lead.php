@@ -16,7 +16,12 @@ class Lead extends Model
     use HasFactory;
     use generateUuid;
 
-    public static $AMO_API = null;
+    public static $AMO_API            = null;
+    public static $BASIC_LEAD         = null;
+    public static $BROKER_ID          = null;
+    public static $BROKER_NAME        = null;
+    public static $CREATED_LEAD_TYPE  = null;
+    public static $MESSAGE_FOR_BROKER = null;
 
     protected $fillable = [
         'uuid',
@@ -39,51 +44,54 @@ class Lead extends Model
     }
 
     /* CRUD METHODS */
-    public static function createLead(array $params): ?Lead
+    public static function createLead(array $params): bool
     {
-        self::$AMO_API    = new amoAPIHub(amoCRM::getAuthData());
-        $leads            = self::fetchLeadById($params['lead_amo_id']);
-        $contact          = self::parseMainContact($leads);
+        Log::info(__METHOD__); //DELETE
+
+        self::initStatic($params);
+
+        $contact          = self::parseMainContact(self::$BASIC_LEAD);
         $mainContact      = self::fetchContactById($contact['id']);
         $mainContactLeads = self::filterMainContactLeadsById($mainContact['_embedded']['leads'], $params['lead_amo_id']);
         $mortgageLead     = self::parseMortgageLead($mainContactLeads);
 
-        Log::info(__METHOD__, [$mortgageLead]); //DELETE
+        if ($mortgageLead) {
+            return self::mortgageExist($mortgageLead);
+        }
 
-        return null;
-        // return self::create(array_merge($lead, []));
-    }
-    public static function getByUuid(string $uuid): ?Lead
-    {
-        return self::whereUuid($uuid)->first();
+        return self::mortgageNotExist();
     }
     public function updateLead(array $lead)
     {
         return $this->update(array_merge($lead, []));
     }
 
+    /* GETTERS-METHODS */
+    public static function getByUuid(string $uuid): ?Lead
+    {
+        return self::whereUuid($uuid)->first();
+    }
+    public static function getMortgagePipeline(): ?Mortgage
+    {
+        $pipeline = Pipeline::whereAmoPipelineId(self::$BASIC_LEAD['pipeline_id'])->first();
+
+        return $pipeline ? $pipeline->mortgage : null;
+    }
+
     /* FETCH-METHODS */
     public static function fetchLeadById(int $id): array
     {
-        // Log::info(__METHOD__, [$id]); //DELETE
-
         $findLeadByIdResponse = self::$AMO_API->findLeadById($id);
 
-        // Log::info(__METHOD__, [$findLeadByIdResponse]); //DELETE
-
         if ($findLeadByIdResponse['code'] !== Response::HTTP_OK) {
-            throw new NotFoundException('basic lead not found');
+            throw new NotFoundException('lead not found by id: ' . $id);
         }
 
         return $findLeadByIdResponse['body'];
     }
     public static function fetchContactById(int $id): array
     {
-        // Log::info(__METHOD__, [$id]); //DELETE
-
         $findLeadByIdResponse = self::$AMO_API->findContactById($id);
-
-        // Log::info(__METHOD__, [$findLeadByIdResponse]); //DELETE
 
         if ($findLeadByIdResponse['code'] !== Response::HTTP_OK) {
             throw new NotFoundException('main contact not found');
@@ -95,8 +103,6 @@ class Lead extends Model
     /* PARSE-METHODS */
     public static function parseMainContact(array $lead): array
     {
-        // Log::info(__METHOD__, [$lead]); //DELETE
-
         $contacts = $lead['_embedded']['contacts'];
 
         for ($contactIndex = 0; $contactIndex < count($contacts); $contactIndex++) {
@@ -110,12 +116,70 @@ class Lead extends Model
     public static function parseMortgageLead(array $leads): ?array
     {
         foreach ($leads as $lead) {
-            if (Mortgage::whereAmoMortgageId($lead['id'])->first()) {
-                Log::info(__METHOD__, [$lead]); //DELETE
+            $amoLead = self::fetchLeadById($lead['id']);
+
+            if (Mortgage::whereAmoMortgageId($amoLead['pipeline_id'])->first()) {
+                return $amoLead;
             }
         }
 
         return null;
+    }
+    public static function parseMortgagePipelineId(): ?int
+    {
+        $mortgage = self::getMortgagePipeline();
+
+        if ($mortgage) {
+            return $mortgage->amo_mortgage_id;
+        }
+
+        return null;
+    }
+    public static function parseMortgageCreationStatusId(): ?int
+    {
+        $mortgage = self::getMortgagePipeline();
+
+        if ($mortgage) {
+            return $mortgage->amo_mortgage_creation_stage_id;
+        }
+
+        return null;
+    }
+
+    /* FUNCTIONS-METHODS */
+    public static function prepareContactsForLinking(array $contacts): array
+    {
+        Log::info(__METHOD__); //DELETE
+
+        $linkingContacts = [];
+
+        for ($i = 0; $i < count($contacts); $i++) {
+            $linkingContacts[] = [
+                "to_entity_id"   => $contacts[$i]['id'],
+                "to_entity_type" => "contacts",
+                "metadata"       => [
+                    "is_main" => $contacts[$i]['is_main'] ? true : false,
+                ],
+            ];
+        }
+
+        return $linkingContacts;
+    }
+    public static function prepareMortgageLeadData(): array
+    {
+        $customFields = self::$AMO_API->parseCustomFields(self::$BASIC_LEAD['custom_fields_values']);
+        $pipelineId   = self::parseMortgagePipelineId();
+        $statusId     = self::parseMortgageCreationStatusId();
+
+        return [
+            'name'                 => "Ипотека " . self::$BASIC_LEAD['name'],
+            'created_by'           => 0,
+            'price'                => self::$BASIC_LEAD['price'],
+            'responsible_user_id'  => self::$BROKER_ID,
+            'status_id'            => $statusId,
+            'pipeline_id'          => $pipelineId,
+            'custom_fields_values' => $customFields,
+        ];
     }
 
     /* FILTER-METHODS */
@@ -130,5 +194,45 @@ class Lead extends Model
         }
 
         return $filteredLeads;
+    }
+
+    /* PROCEDURES-METHODS */
+    public static function initStatic(array $params)
+    {
+        self::$AMO_API            = new amoAPIHub(amoCRM::getAuthData());
+        self::$BASIC_LEAD         = self::fetchLeadById($params['lead_amo_id']);
+        self::$BROKER_ID          = $params['broker_amo_id'];
+        self::$BROKER_NAME        = $params['broker_amo_name'];
+        self::$CREATED_LEAD_TYPE  = $params['created_lead_type'];
+        self::$MESSAGE_FOR_BROKER = $params['message_for_broker'];
+    }
+    public static function mortgageExist(array $mortgageLead): bool
+    {
+        Log::info(__METHOD__, [$mortgageLead]); //DELETE
+
+        return true;
+    }
+    public static function mortgageNotExist(): bool
+    {
+        Log::info(__METHOD__); //DELETE
+
+        $contacts             = self::prepareContactsForLinking(self::$BASIC_LEAD['_embedded']['contacts']);
+        $mortgageLead         = self::createMortgageLead();
+        $linkContactsResponse = self::$AMO_API->linkContactsToLead($mortgageLead['id'], $contacts);
+
+        Log::info(__METHOD__, [$linkContactsResponse]); //DELETE
+
+        //TODO: add leads in DB and make relation
+
+        return true;
+    }
+
+    /* ACTIONS-METHODS */
+    public static function createMortgageLead(): ?array
+    {
+        $mortgageLeadData = self::prepareMortgageLeadData();
+        $mortgageLeadId   = self::$AMO_API->createLead($mortgageLeadData);
+
+        return $mortgageLeadId ? self::fetchLeadById($mortgageLeadId) : null;
     }
 }

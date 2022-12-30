@@ -22,7 +22,11 @@ class LeadController extends Controller
     {
         $lead = Lead::createLead($request->all());
 
-        return $lead ? $lead->uuid : null;
+        if (!$lead) {
+            return response()->json(['message' => 'failed by create'], Response::HTTP_BAD_REQUEST);
+        }
+
+        return response()->json(['message' => 'success by create'], Response::HTTP_OK);
     }
     public function get(Lead $lead): LeadResource
     {

@@ -239,6 +239,51 @@ class amoAPIHub
         }
     }
 
+    public function createLead(array $data): ?int
+    {
+        try {
+            $lead = $this->client->sendRequest([
+                'url'     => "https://" . config('services.amoCRM.subdomain') . ".amocrm.ru/api/v4/leads",
+                'headers' => [
+                    'Content-Type'  => 'application/json',
+                    'Authorization' => 'Bearer ' . $this->amoData['access_token'],
+                ],
+                'method'  => 'POST',
+                'data'    => [$data],
+            ]);
+
+            if ($lead['code'] !== 200) {
+                throw new \Exception($lead['code']);
+            }
+
+            return $lead['body']['_embedded']['leads'][0]['id'];
+        } catch (\Exception$exception) {
+            Log::error(__METHOD__, ['message' => $exception->getMessage()]);
+
+            return null;
+        }
+    }
+
+    public function linkContactsToLead(int $leadId, array $contacts)
+    {
+        $response = $this->client->sendRequest([
+            'url'     => "https://" . config('services.amoCRM.subdomain') . ".amocrm.ru/api/v4/leads/$leadId/link",
+            'headers' => [
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer ' . $this->amoData['access_token'],
+            ],
+            'method'  => 'POST',
+            'data'    => $contacts,
+
+        ]);
+
+        if ($response['code'] !== 200) {
+            throw new \Exception($response['code']);
+        }
+
+        return $response;
+    }
+
     // FIXME das ist ein schlechte Beispiel- Man muss es nie wieder machen.
     public function copyLead($id, $responsible_user_id = false, $flag = false)
     {
@@ -246,13 +291,7 @@ class amoAPIHub
         $lead        = $this->findLeadById($id);
         $pipeline_id = (int) $lead['body']['pipeline_id'];
 
-        Log::info(
-            __METHOD__,
-
-            [
-                'message: copyLead << pipeline_id ' => ['pipeline_id' => $pipeline_id],
-            ]
-        );
+        Log::info(__METHOD__, ['message: copyLead << pipeline_id ' => ['pipeline_id' => $pipeline_id]]);
 
         $pipelineGub      = 1393867;
         $pipelineGubPark  = 4551384;
