@@ -46,8 +46,9 @@ class Lead extends Model
         $contact          = self::parseMainContact($leads);
         $mainContact      = self::fetchContactById($contact['id']);
         $mainContactLeads = self::filterMainContactLeadsById($mainContact['_embedded']['leads'], $params['lead_amo_id']);
+        $mortgageLead     = self::parseMortgageLead($mainContactLeads);
 
-        Log::info(__METHOD__, [$mainContactLeads]); //DELETE
+        Log::info(__METHOD__, [$mortgageLead]); //DELETE
 
         return null;
         // return self::create(array_merge($lead, []));
@@ -105,6 +106,16 @@ class Lead extends Model
         }
 
         throw new NotFoundException('main contact not parsed');
+    }
+    public static function parseMortgageLead(array $leads): ?array
+    {
+        foreach ($leads as $lead) {
+            if (Mortgage::whereAmoMortgageId($lead['id'])->first()) {
+                Log::info(__METHOD__, [$lead]); //DELETE
+            }
+        }
+
+        return null;
     }
 
     /* FILTER-METHODS */
