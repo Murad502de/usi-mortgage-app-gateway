@@ -4,22 +4,22 @@ namespace App\Traits\Http\Middleware\Services\AmoCrm;
 
 use App\Models\Services\amoCRM;
 use App\Services\amoAPI\amoHttp\amoClient;
-use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Facades\Log;
 
 trait amoTokenTrait
 {
     public static function amoToken()
     {
-        Log::info(__METHOD__); //DELETE
+        // Log::info(__METHOD__); //DELETE
 
         $client   = new amoClient();
         $authData = amoCRM::getAuthData();
 
         if ($authData) {
-            Log::info(__METHOD__, [json_encode($authData)]); //DELETE
+            // Log::info(__METHOD__, [json_encode($authData)]); //DELETE
 
             if (time() >= (int) $authData['when_expires']) {
-                Log::info(__METHOD__, ['amocrm access token expired']); //DELETE
+                // Log::info(__METHOD__, ['amocrm access token expired']); //DELETE
 
                 $response = $client->accessTokenUpdate($authData);
 
@@ -37,21 +37,21 @@ trait amoTokenTrait
 
                     amoCRM::auth($accountData);
 
-                    Log::info(__METHOD__, ['amocrm access token updated']); //DELETE
+                    // Log::info(__METHOD__, ['amocrm access token updated']); //DELETE
 
                     return true;
                 } else {
-                    Log::error(__METHOD__, ['amocrm auth error with code: ' . $response['code']]); //DELETE
+                    // Log::error(__METHOD__, ['amocrm auth error with code: ' . $response['code']]); //DELETE
 
                     return false;
                 }
             } else {
-                Log::info(__METHOD__, ['amocrm access token ist not expired']); //DELETE
+                // Log::info(__METHOD__, ['amocrm access token ist not expired']); //DELETE
 
                 return true;
             }
         } else {
-            Log::error(__METHOD__, ['amocrm auth data not found']); //DELETE
+            // Log::error(__METHOD__, ['amocrm auth data not found']); //DELETE
 
             return false;
         }
