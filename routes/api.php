@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     Route::prefix('webhooks')->group(function () {
         Route::prefix('leads')->group(function () {
-            Route::post('create', [LeadWebhookController::class, 'create']);
-            Route::post('update', [LeadWebhookController::class, 'update']);
             Route::post('change-stage', [LeadWebhookController::class, 'changeStage']);
         });
     });

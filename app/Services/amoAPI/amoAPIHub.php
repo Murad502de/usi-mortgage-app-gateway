@@ -439,7 +439,7 @@ class amoAPIHub
         }
     }
 
-    public function parseCustomFields($cf)
+    public function parseCustomFields(array $cf, array $exclude = []): array
     {
         $parsedCustomFields = [];
 
@@ -491,7 +491,7 @@ class amoAPIHub
                     break;
             }
 
-            if ($tmpCf) {
+            if ($tmpCf && !in_array($tmpCf['field_id'], $exclude)) {
                 $parsedCustomFields[] = $tmpCf;
             }
         }

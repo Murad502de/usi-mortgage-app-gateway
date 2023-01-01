@@ -2,12 +2,11 @@
 
 namespace App\Schedule;
 
-use App\Models\Crons\LeadCron;
-
+use App\Schedule\Webhooks\ChangeStageWebhooks;
 class ParseRecentWebhooks
 {
     public function __invoke()
     {
-        LeadCron::parseRecentWebhooks();
+        (new ChangeStageWebhooks)();
     }
 }

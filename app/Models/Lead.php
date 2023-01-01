@@ -16,12 +16,17 @@ class Lead extends Model
     use HasFactory;
     use generateUuid;
 
-    public static $AMO_API            = null;
-    public static $BASIC_LEAD         = null;
-    public static $BROKER_ID          = null;
-    public static $BROKER_NAME        = null;
-    public static $CREATED_LEAD_TYPE  = null;
-    public static $MESSAGE_FOR_BROKER = null;
+    public const LEAD_TYPE_MORTGAGE     = 'mortgage';
+    public const LEAD_TYPE_CONSULTATION = 'consultation';
+    public static $AMO_API              = null;
+    public static $BASIC_LEAD           = null;
+    public static $BROKER_ID            = null;
+    public static $BROKER_NAME          = null;
+    public static $MANAGER_ID           = null;
+    public static $MANAGER_NAME         = null;
+    public static $CREATED_LEAD_TYPE    = null;
+    public static $MESSAGE_FOR_BROKER   = null;
+    public static $EXCLUDE_CF           = [];
 
     protected $fillable = [
         'uuid',
@@ -44,7 +49,7 @@ class Lead extends Model
     }
 
     /* CRUD METHODS */
-    public static function createLead(array $params): bool
+    public static function createLead(array $params): ?int
     {
         Log::info(__METHOD__); //DELETE
 
@@ -71,11 +76,27 @@ class Lead extends Model
     {
         return self::whereUuid($uuid)->first();
     }
+    public static function getByAmoId(int $id): ?Lead
+    {
+        return self::whereAmoId($id)->first();
+    }
     public static function getMortgagePipeline(): ?Mortgage
     {
         $pipeline = Pipeline::whereAmoPipelineId(self::$BASIC_LEAD['pipeline_id'])->first();
 
         return $pipeline ? $pipeline->mortgage : null;
+    }
+    public static function getTaskTextForMortgage(): string
+    {
+        if (self::$CREATED_LEAD_TYPE === self::LEAD_TYPE_MORTGAGE) {
+            return 'Клиент выбрал квартиру. Хочет открыть ипотеку, свяжись с клиентом';
+        }
+
+        if (self::$CREATED_LEAD_TYPE === self::LEAD_TYPE_CONSULTATION) {
+            return 'Клиент еще не определился с объектом недвижимости. Нужна консультация';
+        }
+
+        return 'Свяжись с клиентом';
     }
 
     /* FETCH-METHODS */
@@ -167,15 +188,15 @@ class Lead extends Model
     }
     public static function prepareMortgageLeadData(): array
     {
-        $customFields = self::$AMO_API->parseCustomFields(self::$BASIC_LEAD['custom_fields_values']);
-        $pipelineId   = self::parseMortgagePipelineId();
-        $statusId     = self::parseMortgageCreationStatusId();
+        $customFields = self::$AMO_API->parseCustomFields(self::$BASIC_LEAD['custom_fields_values'], self::$EXCLUDE_CF);
+        $pipelineId   = (int) self::parseMortgagePipelineId();
+        $statusId     = (int) self::parseMortgageCreationStatusId();
 
         return [
             'name'                 => "Ипотека " . self::$BASIC_LEAD['name'],
             'created_by'           => 0,
             'price'                => self::$BASIC_LEAD['price'],
-            'responsible_user_id'  => self::$BROKER_ID,
+            'responsible_user_id'  => (int) self::$BROKER_ID,
             'status_id'            => $statusId,
             'pipeline_id'          => $pipelineId,
             'custom_fields_values' => $customFields,
@@ -201,10 +222,25 @@ class Lead extends Model
     {
         self::$AMO_API            = new amoAPIHub(amoCRM::getAuthData());
         self::$BASIC_LEAD         = self::fetchLeadById($params['lead_amo_id']);
-        self::$BROKER_ID          = $params['broker_amo_id'];
+        self::$BROKER_ID          = (int) $params['broker_amo_id'];
         self::$BROKER_NAME        = $params['broker_amo_name'];
+        self::$MANAGER_ID         = (int) $params['manager_amo_id'];
+        self::$MANAGER_NAME       = $params['manager_amo_name'];
         self::$CREATED_LEAD_TYPE  = $params['created_lead_type'];
         self::$MESSAGE_FOR_BROKER = $params['message_for_broker'];
+        self::$EXCLUDE_CF         = [
+            (int) config('services.amoCRM.exclude_cf_utm_source_id'),
+            (int) config('services.amoCRM.exclude_cf_utm_medium_id'),
+            (int) config('services.amoCRM.exclude_cf_utm_campaign_id'),
+            (int) config('services.amoCRM.exclude_cf_utm_term_id'),
+            (int) config('services.amoCRM.exclude_cf_utm_content_id'),
+            (int) config('services.amoCRM.exclude_cf_roistat_id'),
+            (int) config('services.amoCRM.exclude_cf_roistat_marker_id'),
+            (int) config('services.amoCRM.exclude_cf_source_id'),
+            (int) config('services.amoCRM.exclude_cf_mortgage_created_id'),
+            (int) config('services.amoCRM.exclude_cf_broker_selected_id'),
+            (int) config('services.amoCRM.exclude_cf_lead_manager_id'),
+        ];
     }
     public static function mortgageExist(array $mortgageLead): bool
     {
@@ -212,19 +248,76 @@ class Lead extends Model
 
         return true;
     }
-    public static function mortgageNotExist(): bool
+    public static function mortgageNotExist(): ?int
     {
         Log::info(__METHOD__); //DELETE
 
-        $contacts             = self::prepareContactsForLinking(self::$BASIC_LEAD['_embedded']['contacts']);
-        $mortgageLead         = self::createMortgageLead();
-        $linkContactsResponse = self::$AMO_API->linkContactsToLead($mortgageLead['id'], $contacts);
+        $contacts     = self::prepareContactsForLinking(self::$BASIC_LEAD['_embedded']['contacts']);
+        $mortgageLead = self::createMortgageLead();
 
-        Log::info(__METHOD__, [$linkContactsResponse]); //DELETE
+        self::$AMO_API->linkContactsToLead($mortgageLead['id'], $contacts);
+        self::$AMO_API->addTag(self::$BASIC_LEAD['id'], 'Отправлен в Ипотеку');
+        self::$AMO_API->addTextNote('leads', $mortgageLead['id'], self::$MESSAGE_FOR_BROKER);
+        self::$AMO_API->updateLead([[
+            'id'                   => (int) self::$BASIC_LEAD['id'],
+            'custom_fields_values' => [
+                [
+                    'field_id' => (int) config('services.amoCRM.exclude_cf_broker_selected_id'),
+                    'values'   => [[
+                        'value' => self::$BROKER_NAME,
+                    ]],
+                ],
+                [
+                    'field_id' => (int) config('services.amoCRM.exclude_cf_mortgage_created_id'),
+                    'values'   => [[
+                        'value' => time(),
+                    ]],
+                ],
+            ],
+        ]]);
+        self::$AMO_API->updateLead([[
+            'id'                   => (int) $mortgageLead['id'],
+            'custom_fields_values' => [
+                [
+                    'field_id' => (int) config('services.amoCRM.exclude_cf_lead_manager_id'),
+                    'values'   => [[
+                        'value' => self::$MANAGER_NAME,
+                    ]],
+                ],
+            ],
+        ]]);
+        self::$AMO_API->createTask(
+            self::$BROKER_ID,
+            (int) $mortgageLead['id'],
+            time() + 3600,
+            self::getTaskTextForMortgage(),
+        );
 
-        //TODO: add leads in DB and make relation
+        return self::connectLeadsInRelation($mortgageLead);
+    }
+    public static function connectLeadsInRelation(array $mortgageLead): ?int
+    {
+        $basicLeadModel = self::create([
+            'amo_id'          => self::$BASIC_LEAD['id'],
+            'amo_status_id'   => self::$BASIC_LEAD['status_id'],
+            'amo_pipeline_id' => self::$BASIC_LEAD['pipeline_id'],
+            'is_mortgage'     => 0,
+        ]);
+        $mortgageLeadModel = self::create([
+            'amo_id'          => $mortgageLead['id'],
+            'amo_status_id'   => $mortgageLead['status_id'],
+            'amo_pipeline_id' => $mortgageLead['pipeline_id'],
+            'is_mortgage'     => 1,
+            'lead_id'         => $basicLeadModel->id,
+        ]);
 
-        return true;
+        $basicLeadModel->update([
+            'lead_id' => $mortgageLeadModel ? $mortgageLeadModel->id : null,
+        ]);
+
+        Log::info(__METHOD__, [$mortgageLeadModel ? $mortgageLeadModel->amo_id : null]); //DELETE
+
+        return $mortgageLeadModel ? $mortgageLeadModel->amo_id : null;
     }
 
     /* ACTIONS-METHODS */

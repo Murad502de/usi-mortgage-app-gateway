@@ -6,10 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Webhooks\LeadWebhookAddRequest;
 use App\Http\Requests\Api\Webhooks\LeadWebhookChangeStageRequest;
 use App\Http\Requests\Api\Webhooks\LeadWebhookUpdateRequest;
-use App\Models\Crons\LeadCron;
+use App\Models\Webhooks\ChangeStageWebhook;
 use Illuminate\Http\Response;
-
-use Illuminate\Support\Facades\Log;
 
 class LeadWebhookController extends Controller
 {
@@ -34,19 +32,15 @@ class LeadWebhookController extends Controller
 
     private function handle(array $data)
     {
-        if (
-            isset($data['id']) &&
-            ((int) $data['date_create'] >= (int) config('services.amoCRM.lead_created_at'))
-            // ((int) $data['status_id'] !== (int) config('services.amoCRM.loss_stage_id'))
-        ) {
-            $lead = LeadCron::getLeadByAmoId($data['id']);
+        if (isset($data['id'])) {
+            $lead = ChangeStageWebhook::getLeadByAmoId($data['id']);
 
             if ($lead) {
                 if ($lead->last_modified < (int) $data['last_modified']) {
-                    LeadCron::updateLead($data['id'], $data['last_modified'], $data);
+                    ChangeStageWebhook::updateLead($data['id'], $data['last_modified'], $data);
                 }
             } else {
-                LeadCron::createLead($data['id'], $data['last_modified'], $data);
+                ChangeStageWebhook::createLead($data['id'], $data['last_modified'], $data);
             }
         }
     }
