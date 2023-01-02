@@ -42,6 +42,9 @@ class Lead extends Model
         'updated_at',
     ];
 
+    private static $STAGE_LOSS_ID    = null;
+    private static $STAGE_SUCCESS_ID = null;
+
     /* ENTITY RELATIONS */
     public function lead()
     {
@@ -221,6 +224,8 @@ class Lead extends Model
     public static function initStatic(array $params)
     {
         self::$AMO_API            = new amoAPIHub(amoCRM::getAuthData());
+        self::$STAGE_LOSS_ID      = (int) config('services.amoCRM.loss_stage_id');
+        self::$STAGE_SUCCESS_ID   = (int) config('services.amoCRM.successful_stage_id');
         self::$BASIC_LEAD         = self::fetchLeadById($params['lead_amo_id']);
         self::$BROKER_ID          = (int) $params['broker_amo_id'];
         self::$BROKER_NAME        = $params['broker_amo_name'];
@@ -327,5 +332,15 @@ class Lead extends Model
         $mortgageLeadId   = self::$AMO_API->createLead($mortgageLeadData);
 
         return $mortgageLeadId ? self::fetchLeadById($mortgageLeadId) : null;
+    }
+
+    /* HELPER-METHODS */
+    public static function isActive(int $status): bool
+    {
+        Log::info(__METHOD__, [$status]); //DELETE
+        Log::info(__METHOD__, [self::$STAGE_LOSS_ID]); //DELETE
+        Log::info(__METHOD__, [self::$STAGE_SUCCESS_ID]); //DELETE
+
+        return $status !== self::$STAGE_LOSS_ID && $status !== self::$STAGE_SUCCESS_ID;
     }
 }

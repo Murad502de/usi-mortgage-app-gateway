@@ -31,5 +31,6 @@ return [
         'exclude_cf_mortgage_created_id' => env('AMOCRM_EXCLUDE_CF_MORTGAGE_CREATED_ID', null),
         'exclude_cf_broker_selected_id'  => env('AMOCRM_EXCLUDE_CF_BROKER_SELECTED_ID', null),
         'exclude_cf_lead_manager_id'     => env('AMOCRM_EXCLUDE_CF_LEAD_MANAGER_ID', null),
+        'exclude_cf_rejection_reason_id' => env('AMOCRM_EXCLUDE_CF_REJECTION_REASON_ID', null),
     ],
 ];

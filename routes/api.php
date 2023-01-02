@@ -44,6 +44,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/{mortgage:uuid}', [MortgageController::class, 'get']);
         Route::put('/{mortgage:uuid}/update', [MortgageController::class, 'update']);
         Route::delete('/{mortgage:uuid}/delete', [MortgageController::class, 'delete']);
+        Route::get('id/{mortgage:amo_mortgage_id}', [MortgageController::class, 'get']);
     });
 
     Route::prefix('pipelines')->group(function () {

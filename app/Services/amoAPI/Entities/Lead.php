@@ -11,12 +11,15 @@ class Lead
 
     public static function findCustomFieldById($customFields, $customFieldId)
     {
+        // Log::info(__METHOD__, [$customFieldId]); //DELETE
+        // Log::info(__METHOD__, [$customFields]); //DELETE
+
         if (!$customFields) {
             return null;
         }
 
         foreach ($customFields as $customField) {
-            if ((int) $customField['id'] === (int) $customFieldId) {
+            if ((int) $customField['field_id'] === (int) $customFieldId) {
                 return $customField['values'][0]['value'];
             }
         }
