@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
             ->name('parse_recent_webhooks')
             ->withoutOverlapping()
             ->everyMinute();
-        $schedule->exec((new StartQueueProcessing)(true))
+        $schedule->exec((new StartQueueProcessing)())
             ->name('start_queue_processing')
             ->everyMinute();
     }
