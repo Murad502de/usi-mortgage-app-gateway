@@ -315,7 +315,7 @@ class ChangeStageWebhook extends Model
                 self::processWebhook($lead);
             }
 
-            // $lead->delete(); //TODO
+            $lead->delete();
         }
     }
 }
