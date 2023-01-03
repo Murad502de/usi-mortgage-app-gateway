@@ -313,8 +313,9 @@ class ChangeStageWebhook extends Model
                     'amo_pipeline_id' => self::getLeadWebhookPipelineId($leadWebhook),
                 ]);
                 self::processWebhook($lead);
-                $lead->delete();
             }
+
+            $leadWebhook->delete();
         }
     }
 }
