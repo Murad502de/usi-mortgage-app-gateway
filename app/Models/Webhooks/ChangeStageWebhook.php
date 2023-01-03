@@ -200,7 +200,7 @@ class ChangeStageWebhook extends Model
                 (int) $basicLead['responsible_user_id'],
                 (int) $basicLead['id'],
                 time() + 10800,
-                'Сделка по ипотеке “закрытаа не реализована” с причиной отказа: ' . $rejectReason
+                'Сделку по ипотеке переместили в этап "Закрыто и не реализовано" с причиной отказа: ' . $rejectReason
             );
         }
     }
