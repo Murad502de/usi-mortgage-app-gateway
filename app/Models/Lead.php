@@ -251,6 +251,13 @@ class Lead extends Model
     {
         Log::info(__METHOD__, [$mortgageLead]); //DELETE
 
+        self::$AMO_API->createTask(
+            (int) $mortgageLead['responsible_user_id'],
+            (int) $mortgageLead['id'],
+            time() + 3600 * 3,
+            'Менеджер повторно отправил запрос на ипотеку',
+        );
+
         return true;
     }
     public static function mortgageNotExist(): ?int
