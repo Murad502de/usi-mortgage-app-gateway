@@ -679,7 +679,7 @@ class amoAPIHub
 
     public function fetchUsers()
     {
-        $url = "https://" . config('services.amoCRM.subdomain') . ".amocrm.ru/api/v4/users";
+        $url = "https://" . config('services.amoCRM.subdomain') . ".amocrm.ru/api/v4/users?limit=250";
 
         try {
             $response = $this->client->sendRequest([
@@ -707,7 +707,7 @@ class amoAPIHub
 
     public function fetchPipelines()
     {
-        $url = "https://" . config('services.amoCRM.subdomain') . ".amocrm.ru/api/v4/leads/pipelines";
+        $url = "https://" . config('services.amoCRM.subdomain') . ".amocrm.ru/api/v4/leads/pipelines?limit=250";
 
         try {
             $response = $this->client->sendRequest([
