@@ -42,8 +42,9 @@ class Lead extends Model
         'updated_at',
     ];
 
-    private static $STAGE_LOSS_ID    = null;
-    private static $STAGE_SUCCESS_ID = null;
+    private static $STAGE_LOSS_ID         = null;
+    private static $STAGE_SUCCESS_ID      = null;
+    private static $TASK_TYPE_CONTROLL_ID = null;
 
     /* ENTITY RELATIONS */
     public function lead()
@@ -223,17 +224,18 @@ class Lead extends Model
     /* PROCEDURES-METHODS */
     public static function initStatic(array $params)
     {
-        self::$AMO_API            = new amoAPIHub(amoCRM::getAuthData());
-        self::$STAGE_LOSS_ID      = (int) config('services.amoCRM.loss_stage_id');
-        self::$STAGE_SUCCESS_ID   = (int) config('services.amoCRM.successful_stage_id');
-        self::$BASIC_LEAD         = self::fetchLeadById($params['lead_amo_id']);
-        self::$BROKER_ID          = (int) $params['broker_amo_id'];
-        self::$BROKER_NAME        = $params['broker_amo_name'];
-        self::$MANAGER_ID         = (int) $params['manager_amo_id'];
-        self::$MANAGER_NAME       = $params['manager_amo_name'];
-        self::$CREATED_LEAD_TYPE  = $params['created_lead_type'];
-        self::$MESSAGE_FOR_BROKER = $params['message_for_broker'];
-        self::$EXCLUDE_CF         = [
+        self::$AMO_API               = new amoAPIHub(amoCRM::getAuthData());
+        self::$STAGE_LOSS_ID         = (int) config('services.amoCRM.loss_stage_id');
+        self::$STAGE_SUCCESS_ID      = (int) config('services.amoCRM.successful_stage_id');
+        self::$BASIC_LEAD            = self::fetchLeadById($params['lead_amo_id']);
+        self::$BROKER_ID             = (int) $params['broker_amo_id'];
+        self::$BROKER_NAME           = $params['broker_amo_name'];
+        self::$MANAGER_ID            = (int) $params['manager_amo_id'];
+        self::$MANAGER_NAME          = $params['manager_amo_name'];
+        self::$CREATED_LEAD_TYPE     = $params['created_lead_type'];
+        self::$MESSAGE_FOR_BROKER    = $params['message_for_broker'];
+        self::$TASK_TYPE_CONTROLL_ID = (int) config('services.amoCRM.constant_task_type_id__controll');
+        self::$EXCLUDE_CF            = [
             (int) config('services.amoCRM.exclude_cf_utm_source_id'),
             (int) config('services.amoCRM.exclude_cf_utm_medium_id'),
             (int) config('services.amoCRM.exclude_cf_utm_campaign_id'),
@@ -256,6 +258,7 @@ class Lead extends Model
             (int) $mortgageLead['id'],
             time() + 3600 * 3,
             'Менеджер повторно отправил запрос на ипотеку',
+            self::$TASK_TYPE_CONTROLL_ID
         );
 
         return true;

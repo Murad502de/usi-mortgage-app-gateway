@@ -27,11 +27,12 @@ class ChangeStageWebhook extends Model
         'id',
     ];
 
-    private const PARSE_COUNT           = 20;
-    private static $AMO_API             = null;
-    private static $STAGE_LOSS_ID       = null;
-    private static $STAGE_SUCCESS_ID    = null;
-    private static $REJECTION_REASON_ID = null;
+    private const PARSE_COUNT             = 20;
+    private static $AMO_API               = null;
+    private static $STAGE_LOSS_ID         = null;
+    private static $STAGE_SUCCESS_ID      = null;
+    private static $REJECTION_REASON_ID   = null;
+    private static $TASK_TYPE_CONTROLL_ID = null;
 
     /* ENTITY RELATIONS */
 
@@ -146,10 +147,11 @@ class ChangeStageWebhook extends Model
     /* PROCEDURES-METHODS */
     public static function initStatic()
     {
-        self::$AMO_API             = new amoAPIHub(amoCRM::getAuthData());
-        self::$STAGE_LOSS_ID       = (int) config('services.amoCRM.loss_stage_id');
-        self::$STAGE_SUCCESS_ID    = (int) config('services.amoCRM.successful_stage_id');
-        self::$REJECTION_REASON_ID = (int) config('services.amoCRM.exclude_cf_rejection_reason_id');
+        self::$AMO_API               = new amoAPIHub(amoCRM::getAuthData());
+        self::$STAGE_LOSS_ID         = (int) config('services.amoCRM.loss_stage_id');
+        self::$STAGE_SUCCESS_ID      = (int) config('services.amoCRM.successful_stage_id');
+        self::$REJECTION_REASON_ID   = (int) config('services.amoCRM.exclude_cf_rejection_reason_id');
+        self::$TASK_TYPE_CONTROLL_ID = (int) config('services.amoCRM.constant_task_type_id__controll');
     }
     public static function processWebhook(Lead $lead)
     {
@@ -200,7 +202,8 @@ class ChangeStageWebhook extends Model
                 (int) $basicLead['responsible_user_id'],
                 (int) $basicLead['id'],
                 time() + 10800,
-                'Сделку по ипотеке переместили в этап "Закрыто и не реализовано" с причиной отказа: ' . $rejectReason
+                'Сделку по ипотеке переместили в этап "Закрыто и не реализовано" с причиной отказа: ' . $rejectReason,
+                self::$TASK_TYPE_CONTROLL_ID
             );
         }
     }
@@ -214,7 +217,8 @@ class ChangeStageWebhook extends Model
             (int) $basicLead['responsible_user_id'],
             (int) $basicLead['id'],
             time() + 10800,
-            'Клиенту одобрена ипотека'
+            'Клиенту одобрена ипотека',
+            self::$TASK_TYPE_CONTROLL_ID
         );
     }
     public static function processMortgageLeadBeforeApplication(Lead $lead)
@@ -225,11 +229,12 @@ class ChangeStageWebhook extends Model
 
         // Log::info(__METHOD__, [$mortgageLead]); //DELETE
 
-        self::$AMO_API->createTask(
+        self::$AMO_API->createTask( //FIXME: subject to refactoring
             (int) $mortgageLead['responsible_user_id'],
             (int) $mortgageLead['id'],
             time() + 10800,
-            'Клиент забронировал КВ. Созвонись с клиентом и приступи к открытию Ипотеки'
+            'Клиент забронировал КВ. Созвонись с клиентом и приступи к открытию Ипотеки',
+            self::$TASK_TYPE_CONTROLL_ID
         );
         self::$AMO_API->updateLead([[
             "id"        => (int) $mortgageLead['id'],
@@ -244,11 +249,12 @@ class ChangeStageWebhook extends Model
 
         // Log::info(__METHOD__, [$mortgageLead]); //DELETE
 
-        self::$AMO_API->createTask(
+        self::$AMO_API->createTask( //FIXME: subject to refactoring
             (int) $mortgageLead['responsible_user_id'],
             (int) $mortgageLead['id'],
             time() + 10800,
-            'Клиент забронировал КВ. Созвонись с клиентом и приступи к открытию Ипотеки'
+            'Клиент забронировал КВ. Созвонись с клиентом и приступи к открытию Ипотеки',
+            self::$TASK_TYPE_CONTROLL_ID
         );
     }
     public static function processBasicLead(Lead $lead)
