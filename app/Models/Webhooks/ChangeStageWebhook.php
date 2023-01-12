@@ -27,7 +27,7 @@ class ChangeStageWebhook extends Model
         'id',
     ];
 
-    private const PARSE_COUNT             = 20;
+    private const PARSE_COUNT             = 40;
     private static $AMO_API               = null;
     private static $STAGE_LOSS_ID         = null;
     private static $STAGE_SUCCESS_ID      = null;
