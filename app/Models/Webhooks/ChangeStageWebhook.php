@@ -321,6 +321,8 @@ class ChangeStageWebhook extends Model
                 self::processWebhook($lead);
             }
 
+            Log::info(__METHOD__, ['delete leadWebhook: ' . $leadWebhook->lead_id]); //DELETE
+
             $leadWebhook->delete();
         }
     }
