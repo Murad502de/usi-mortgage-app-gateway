@@ -131,7 +131,7 @@ class ChangeStageWebhook extends Model
     }
 
     /* FETCH-METHODS */
-    public static function fetchLeadById(int $id): array
+    public static function fetchLeadById(int $id): ?array
     {
         $findLeadByIdResponse = self::$AMO_API->findLeadById($id);
 
