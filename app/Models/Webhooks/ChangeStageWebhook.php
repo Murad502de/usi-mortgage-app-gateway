@@ -115,6 +115,10 @@ class ChangeStageWebhook extends Model
 
         $mortgageLead = self::fetchLeadById($lead->amo_id);
 
+        if (!$mortgageLead) {
+            return false;
+        }
+
         return in_array($mortgageLead['status_id'], $mortgageAfterApplyingStages);
     }
     public static function isBasicLeadBooked(Lead $lead): bool
@@ -132,7 +136,11 @@ class ChangeStageWebhook extends Model
         $findLeadByIdResponse = self::$AMO_API->findLeadById($id);
 
         if ($findLeadByIdResponse['code'] !== Response::HTTP_OK) {
-            throw new NotFoundException('lead not found by id: ' . $id);
+            // throw new NotFoundException('lead not found by id: ' . $id);
+
+            Log::error(__METHOD__, ['lead not found by id: ' . $id]); //DELETE
+
+            return null;
         }
 
         return $findLeadByIdResponse['body'];
@@ -182,6 +190,10 @@ class ChangeStageWebhook extends Model
         $basicLead    = self::fetchLeadById($lead->lead->amo_id);
         $mortgageLead = self::fetchLeadById($lead->amo_id);
 
+        if (!$basicLead || !$mortgageLead) {
+            return;
+        }
+
         // Log::info(__METHOD__, [$basicLead]); //DELETE
         // Log::info(__METHOD__, [$mortgageLead]); //DELETE
 
@@ -213,6 +225,10 @@ class ChangeStageWebhook extends Model
 
         $basicLead = self::fetchLeadById($lead->lead->amo_id);
 
+        if (!$basicLead) {
+            return;
+        }
+
         self::$AMO_API->createTask(
             (int) $basicLead['responsible_user_id'],
             (int) $basicLead['id'],
@@ -226,6 +242,10 @@ class ChangeStageWebhook extends Model
         Log::info(__METHOD__); //DELETE
 
         $mortgageLead = self::fetchLeadById($lead->amo_id);
+
+        if (!$mortgageLead) {
+            return;
+        }
 
         // Log::info(__METHOD__, [$mortgageLead]); //DELETE
 
@@ -246,6 +266,10 @@ class ChangeStageWebhook extends Model
         Log::info(__METHOD__); //DELETE
 
         $mortgageLead = self::fetchLeadById($lead->amo_id);
+
+        if (!$mortgageLead) {
+            return;
+        }
 
         // Log::info(__METHOD__, [$mortgageLead]); //DELETE
 
@@ -274,6 +298,10 @@ class ChangeStageWebhook extends Model
         Log::info(__METHOD__); //DELETE
 
         $mortgageLead = self::fetchLeadById($lead->lead->amo_id);
+
+        if (!$mortgageLead) {
+            return;
+        }
 
         self::$AMO_API->createTask(
             (int) $mortgageLead['responsible_user_id'],
