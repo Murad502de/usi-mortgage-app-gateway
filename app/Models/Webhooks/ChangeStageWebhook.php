@@ -85,7 +85,7 @@ class ChangeStageWebhook extends Model
         Log::info(__METHOD__ . ' AFTER'); //DELETE
         Log::info($mortgage); //DELETE
 
-        return (int) $mortgage->amo_mortgage_applying_stage_id;
+        return !!$mortgage ? (int) $mortgage->amo_mortgage_applying_stage_id : null;
     }
 
     /* HELPER-METHODS */
@@ -261,10 +261,15 @@ class ChangeStageWebhook extends Model
             'Клиент забронировал КВ. Созвонись с клиентом и приступи к открытию Ипотеки',
             self::$TASK_TYPE_CONTROLL_ID
         );
-        self::$AMO_API->updateLead([[
-            "id"        => (int) $mortgageLead['id'],
-            "status_id" => self::getMortgageApplyingStageId($lead),
-        ]]);
+
+        $mortgageApplyingStageId = self::getMortgageApplyingStageId($lead);
+
+        if (!!$mortgageApplyingStageId) {
+            self::$AMO_API->updateLead([[
+                "id"        => (int) $mortgageLead['id'],
+                "status_id" => $mortgageApplyingStageId,
+            ]]);
+        }
     }
     public static function processMortgageLeadAfterApplication(Lead $lead)
     {
