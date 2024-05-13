@@ -77,9 +77,12 @@ class ChangeStageWebhook extends Model
     }
     public static function getMortgageApplyingStageId(Lead $lead): ?int
     {
+        Log::info(__METHOD__ . ' Before'); //DELETE
+        Log::info($lead); //DELETE
+
         $mortgage = Mortgage::whereAmoMortgageId($lead->amo_pipeline_id)->first();
 
-        Log::info(__METHOD__); //DELETE
+        Log::info(__METHOD__ . ' AFTER'); //DELETE
         Log::info($mortgage); //DELETE
 
         return (int) $mortgage->amo_mortgage_applying_stage_id;
