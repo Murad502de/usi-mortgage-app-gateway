@@ -2,7 +2,6 @@
 
 namespace App\Models\Webhooks;
 
-use App\Exceptions\NotFoundException;
 use App\Models\Lead;
 use App\Models\Mortgage;
 use App\Models\Pipeline;
@@ -79,6 +78,9 @@ class ChangeStageWebhook extends Model
     public static function getMortgageApplyingStageId(Lead $lead): ?int
     {
         $mortgage = Mortgage::whereAmoMortgageId($lead->amo_pipeline_id)->first();
+
+        Log::info(__METHOD__); //DELETE
+        Log::info($mortgage); //DELETE
 
         return (int) $mortgage->amo_mortgage_applying_stage_id;
     }
