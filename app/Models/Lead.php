@@ -55,20 +55,22 @@ class Lead extends Model
     /* CRUD METHODS */
     public static function createLead(array $params): ?int
     {
-        Log::info(__METHOD__); //DELETE
+        Log::info(__METHOD__, $params); //DELETE
 
-        self::initStatic($params);
+        // self::initStatic($params);
 
-        $contact          = self::parseMainContact(self::$BASIC_LEAD);
-        $mainContact      = self::fetchContactById($contact['id']);
-        $mainContactLeads = self::filterMainContactLeadsById($mainContact['_embedded']['leads'], $params['lead_amo_id']);
-        $mortgageLead     = self::parseMortgageLead($mainContactLeads);
+        // $contact          = self::parseMainContact(self::$BASIC_LEAD);
+        // $mainContact      = self::fetchContactById($contact['id']);
+        // $mainContactLeads = self::filterMainContactLeadsById($mainContact['_embedded']['leads'], $params['lead_amo_id']);
+        // $mortgageLead     = self::parseMortgageLead($mainContactLeads);
 
-        if ($mortgageLead) {
-            return self::mortgageExist($mortgageLead);
-        }
+        // if ($mortgageLead) {
+        //     return self::mortgageExist($mortgageLead);
+        // }
 
-        return self::mortgageNotExist();
+        // return self::mortgageNotExist();
+
+        return 1;
     }
     public function updateLead(array $lead)
     {
