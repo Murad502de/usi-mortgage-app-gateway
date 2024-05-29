@@ -61,6 +61,8 @@ class Lead extends Model
 
         if (!!$lead && !$lead->is_mortgage) {
             dump(__METHOD__, 'Basic Lead is found'); //DELETE
+            $mortgageLead = $lead->lead;
+            dump(__METHOD__, $mortgageLead); //DELETE
         }
 
         dump(__METHOD__, 'Basic Lead not found'); //DELETE
