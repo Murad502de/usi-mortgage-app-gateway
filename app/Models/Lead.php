@@ -56,7 +56,7 @@ class Lead extends Model
     public static function createLead(array $params): ?int
     {
         dump(__METHOD__, $params); //DELETE
-        $lead = self::whereLeadAmoId($params['lead_amo_id'])->first();
+        $lead = self::whereAmoId($params['lead_amo_id'])->first();
         dump(__METHOD__, $lead); //DELETE
 
         // self::initStatic($params);
