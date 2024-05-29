@@ -55,37 +55,38 @@ class Lead extends Model
     /* CRUD METHODS */
     public static function createLead(array $params): ?int
     {
-        // dump(__METHOD__, $params); //DELETE
-        $lead = self::whereAmoId($params['lead_amo_id'])->first();
-        // dump(__METHOD__, $lead); //DELETE
-
-        if (!!$lead && !$lead->is_mortgage) {
-            dump('Basic Lead is found'); //DELETE
-            $mortgageLead = $lead->lead;
-            // dump(__METHOD__, $mortgageLead); //DELETE
-
-            if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
-                dump('Mortgage Lead is found'); //DELETE
-
-                return 1;
-            }
-        }
-
-        dump('Basic Lead not found'); //DELETE
-        return null;
-
+        // // dump(__METHOD__, $params); //DELETE
         // self::initStatic($params);
+        // $lead = self::whereAmoId($params['lead_amo_id'])->first();
+        // // dump(__METHOD__, $lead); //DELETE
 
-        // $contact          = self::parseMainContact(self::$BASIC_LEAD);
-        // $mainContact      = self::fetchContactById($contact['id']);
-        // $mainContactLeads = self::filterMainContactLeadsById($mainContact['_embedded']['leads'], $params['lead_amo_id']);
-        // $mortgageLead     = self::parseMortgageLead($mainContactLeads);
+        // if (!!$lead && !$lead->is_mortgage) {
+        //     dump('Basic Lead is found'); //DELETE
+        //     $mortgageLead = $lead->lead;
+        //     // dump(__METHOD__, $mortgageLead); //DELETE
 
-        // if ($mortgageLead) {
-        //     return self::mortgageExist($mortgageLead);
+        //     if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
+        //         dump('Mortgage Lead is found'); //DELETE
+
+        //         return 1;
+        //     }
         // }
 
-        // return self::mortgageNotExist();
+        // dump('Basic Lead not found'); //DELETE
+        // return null;
+
+        self::initStatic($params);
+
+        $contact          = self::parseMainContact(self::$BASIC_LEAD);
+        $mainContact      = self::fetchContactById($contact['id']);
+        $mainContactLeads = self::filterMainContactLeadsById($mainContact['_embedded']['leads'], $params['lead_amo_id']);
+        $mortgageLead     = self::parseMortgageLead($mainContactLeads);
+
+        if ($mortgageLead) {
+            return self::mortgageExist($mortgageLead);
+        }
+
+        return self::mortgageNotExist();
     }
     public function updateLead(array $lead)
     {
