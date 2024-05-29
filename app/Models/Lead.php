@@ -55,17 +55,23 @@ class Lead extends Model
     /* CRUD METHODS */
     public static function createLead(array $params): ?int
     {
-        dump(__METHOD__, $params); //DELETE
+        // dump(__METHOD__, $params); //DELETE
         $lead = self::whereAmoId($params['lead_amo_id'])->first();
-        dump(__METHOD__, $lead); //DELETE
+        // dump(__METHOD__, $lead); //DELETE
 
         if (!!$lead && !$lead->is_mortgage) {
-            dump(__METHOD__, 'Basic Lead is found'); //DELETE
+            dump('Basic Lead is found'); //DELETE
             $mortgageLead = $lead->lead;
-            dump(__METHOD__, $mortgageLead); //DELETE
+            // dump(__METHOD__, $mortgageLead); //DELETE
+
+            if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
+                dump('Mortgage Lead is found'); //DELETE
+
+                return 1;
+            }
         }
 
-        dump(__METHOD__, 'Basic Lead not found'); //DELETE
+        dump('Basic Lead not found'); //DELETE
         return null;
 
         // self::initStatic($params);
