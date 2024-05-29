@@ -59,6 +59,13 @@ class Lead extends Model
         $lead = self::whereAmoId($params['lead_amo_id'])->first();
         dump(__METHOD__, $lead); //DELETE
 
+        if (!!$lead && !$lead->is_mortgage) {
+            dump(__METHOD__, 'Basic Lead is found'); //DELETE
+        }
+
+        dump(__METHOD__, 'Basic Lead not found'); //DELETE
+        return null;
+
         // self::initStatic($params);
 
         // $contact          = self::parseMainContact(self::$BASIC_LEAD);
@@ -71,8 +78,6 @@ class Lead extends Model
         // }
 
         // return self::mortgageNotExist();
-
-        return 1;
     }
     public function updateLead(array $lead)
     {
