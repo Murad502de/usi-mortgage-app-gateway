@@ -58,6 +58,8 @@ class Lead extends Model
         // dump(__METHOD__, $params); //DELETE
         self::initStatic($params);
 
+        dump(self::$BASIC_LEAD); //DELETE
+
         if (
             self::$BASIC_LEAD['id'] !== self::$STAGE_LOSS_ID &&
             self::$BASIC_LEAD['id'] !== self::$STAGE_SUCCESS_ID
