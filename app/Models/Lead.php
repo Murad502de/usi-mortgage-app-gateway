@@ -55,7 +55,7 @@ class Lead extends Model
     /* CRUD METHODS */
     public static function createLead(array $params): ?int
     {
-        // dump(__METHOD__, $params); //DELETE
+        Log::info(__METHOD__); //DELETE
         self::initStatic($params);
 
         if (
@@ -63,27 +63,24 @@ class Lead extends Model
             self::$BASIC_LEAD['status_id'] !== self::$STAGE_SUCCESS_ID
         ) {
             $lead = self::whereAmoId($params['lead_amo_id'])->first();
-            // dump(__METHOD__, $lead); //DELETE
 
             if (!!$lead && !$lead->is_mortgage) {
-                dump('Basic Lead is found'); //DELETE
                 $mortgageLead = $lead->lead;
-                // dump(__METHOD__, $mortgageLead); //DELETE
 
                 if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
-                    dump('Mortgage Lead is found'); //DELETE
                     $amoMortgageLead = self::fetchLeadById($mortgageLead->amo_id);
                     return self::mortgageExist($amoMortgageLead);
                 }
 
+                Log::error(__METHOD__ . ' Mortgage Lead not found for: ' . self::$BASIC_LEAD['id']); //DELETE
                 return null;
             }
 
-            dump('Basic Lead not Found'); //DELETE
+            Log::info(__METHOD__ . ' Basic Lead not Found: ' . self::$BASIC_LEAD['id']); //DELETE
             return self::mortgageNotExist();
         }
 
-        // dump('Basic Lead is closed'); //DELETE
+        Log::error(__METHOD__ . ' Basic Lead is closed: ' . self::$BASIC_LEAD['id']); //DELETE
         return null;
 
         // self::initStatic($params);
