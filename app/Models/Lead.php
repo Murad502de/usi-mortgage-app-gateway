@@ -75,6 +75,8 @@ class Lead extends Model
                     $amoMortgageLead = self::fetchLeadById($mortgageLead->amo_id);
                     return self::mortgageExist($amoMortgageLead);
                 }
+            } else { //DELETE
+                dump('Basic Lead is closed'); //DELETE
             }
 
             return null;
