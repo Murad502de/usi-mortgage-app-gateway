@@ -268,18 +268,23 @@ class Lead extends Model
             (int) config('services.amoCRM.exclude_cf_lead_manager_id'),
         ];
     }
-    public static function mortgageExist(array $mortgageLead): bool
+    // public static function mortgageExist(array $mortgageLead): bool
+    // {
+    //     Log::info(__METHOD__, [$mortgageLead]); //DELETE
+
+    //     self::$AMO_API->createTask(
+    //         (int) $mortgageLead['responsible_user_id'],
+    //         (int) $mortgageLead['id'],
+    //         time() + 3600 * 3,
+    //         'Менеджер повторно отправил запрос на ипотеку',
+    //         self::$TASK_TYPE_CONTROLL_ID
+    //     );
+
+    //     return true;
+    // }
+    public static function mortgageExist($mortgageLead): bool
     {
         dump($mortgageLead); //DELETE
-        Log::info(__METHOD__, [$mortgageLead]); //DELETE
-
-        // self::$AMO_API->createTask(
-        //     (int) $mortgageLead['responsible_user_id'],
-        //     (int) $mortgageLead['id'],
-        //     time() + 3600 * 3,
-        //     'Менеджер повторно отправил запрос на ипотеку',
-        //     self::$TASK_TYPE_CONTROLL_ID
-        // );
 
         // self::$AMO_API->createTask(
         //     (int) $mortgageLead['responsible_user_id'],
