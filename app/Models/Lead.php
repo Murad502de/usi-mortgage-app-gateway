@@ -67,7 +67,7 @@ class Lead extends Model
 
             if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
                 dump('Mortgage Lead is found'); //DELETE
-                return 1;
+                return self::mortgageExist($mortgageLead);
             }
 
             return null;
@@ -270,15 +270,24 @@ class Lead extends Model
     }
     public static function mortgageExist(array $mortgageLead): bool
     {
+        dump($mortgageLead); //DELETE
         Log::info(__METHOD__, [$mortgageLead]); //DELETE
 
-        self::$AMO_API->createTask(
-            (int) $mortgageLead['responsible_user_id'],
-            (int) $mortgageLead['id'],
-            time() + 3600 * 3,
-            'Менеджер повторно отправил запрос на ипотеку',
-            self::$TASK_TYPE_CONTROLL_ID
-        );
+        // self::$AMO_API->createTask(
+        //     (int) $mortgageLead['responsible_user_id'],
+        //     (int) $mortgageLead['id'],
+        //     time() + 3600 * 3,
+        //     'Менеджер повторно отправил запрос на ипотеку',
+        //     self::$TASK_TYPE_CONTROLL_ID
+        // );
+
+        // self::$AMO_API->createTask(
+        //     (int) $mortgageLead['responsible_user_id'],
+        //     (int) $mortgageLead['id'],
+        //     time() + 3600 * 3,
+        //     'Менеджер повторно отправил запрос на ипотеку',
+        //     self::$TASK_TYPE_CONTROLL_ID
+        // );
 
         return true;
     }
