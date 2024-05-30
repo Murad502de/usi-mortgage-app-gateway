@@ -57,26 +57,30 @@ class Lead extends Model
     {
         // dump(__METHOD__, $params); //DELETE
         self::initStatic($params);
+
+        dump(self::$BASIC_LEAD); //DELETE
+
+        // if (
+        //     $lead->amo_status_id !== self::$STAGE_LOSS_ID &&
+        //     $lead->amo_status_id !== self::$STAGE_SUCCESS_ID
+        // ) {
+
+        // } else { //DELETE
+        //     dump('Basic Lead is closed'); //DELETE
+        // }
+
         $lead = self::whereAmoId($params['lead_amo_id'])->first();
         // dump(__METHOD__, $lead); //DELETE
 
         if (!!$lead && !$lead->is_mortgage) {
             dump('Basic Lead is found'); //DELETE
+            $mortgageLead = $lead->lead;
+            // dump(__METHOD__, $mortgageLead); //DELETE
 
-            if (
-                $lead->amo_status_id !== self::$STAGE_LOSS_ID &&
-                $lead->amo_status_id !== self::$STAGE_SUCCESS_ID
-            ) {
-                $mortgageLead = $lead->lead;
-                // dump(__METHOD__, $mortgageLead); //DELETE
-
-                if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
-                    dump('Mortgage Lead is found'); //DELETE
-                    $amoMortgageLead = self::fetchLeadById($mortgageLead->amo_id);
-                    return self::mortgageExist($amoMortgageLead);
-                }
-            } else { //DELETE
-                dump('Basic Lead is closed'); //DELETE
+            if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
+                dump('Mortgage Lead is found'); //DELETE
+                $amoMortgageLead = self::fetchLeadById($mortgageLead->amo_id);
+                return self::mortgageExist($amoMortgageLead);
             }
 
             return null;
