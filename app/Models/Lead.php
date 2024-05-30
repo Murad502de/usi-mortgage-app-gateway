@@ -83,7 +83,7 @@ class Lead extends Model
             return self::mortgageNotExist();
         }
 
-        dump('Basic Lead is closed'); //DELETE
+        // dump('Basic Lead is closed'); //DELETE
         return null;
 
         // self::initStatic($params);
