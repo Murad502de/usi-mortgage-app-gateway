@@ -62,13 +62,19 @@ class Lead extends Model
 
         if (!!$lead && !$lead->is_mortgage) {
             dump('Basic Lead is found'); //DELETE
-            $mortgageLead = $lead->lead;
-            // dump(__METHOD__, $mortgageLead); //DELETE
 
-            if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
-                dump('Mortgage Lead is found'); //DELETE
-                $amoMortgageLead = self::fetchLeadById($mortgageLead->amo_id);
-                return self::mortgageExist($amoMortgageLead);
+            if (
+                $lead->amo_status_id !== self::$STAGE_LOSS_ID &&
+                $lead->amo_status_id !== self::$STAGE_SUCCESS_ID
+            ) {
+                $mortgageLead = $lead->lead;
+                // dump(__METHOD__, $mortgageLead); //DELETE
+
+                if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
+                    dump('Mortgage Lead is found'); //DELETE
+                    $amoMortgageLead = self::fetchLeadById($mortgageLead->amo_id);
+                    return self::mortgageExist($amoMortgageLead);
+                }
             }
 
             return null;
@@ -271,7 +277,7 @@ class Lead extends Model
     }
     public static function mortgageExist(array $mortgageLead): bool
     {
-        dump($mortgageLead); //DELETE
+        // dump($mortgageLead); //DELETE
         Log::info(__METHOD__, [$mortgageLead]); //DELETE
 
         self::$AMO_API->createTask(
