@@ -67,13 +67,14 @@ class Lead extends Model
 
             if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
                 dump('Mortgage Lead is found'); //DELETE
-
                 return 1;
             }
+
+            return null;
         }
 
         dump('Basic Lead not Found'); //DELETE
-        return null;
+        return self::mortgageNotExist();
 
         // self::initStatic($params);
 
