@@ -58,36 +58,33 @@ class Lead extends Model
         // dump(__METHOD__, $params); //DELETE
         self::initStatic($params);
 
-        dump(self::$BASIC_LEAD); //DELETE
+        if (
+            self::$BASIC_LEAD['id'] !== self::$STAGE_LOSS_ID &&
+            self::$BASIC_LEAD['id'] !== self::$STAGE_SUCCESS_ID
+        ) {
+            $lead = self::whereAmoId($params['lead_amo_id'])->first();
+            // dump(__METHOD__, $lead); //DELETE
 
-        // if (
-        //     $lead->amo_status_id !== self::$STAGE_LOSS_ID &&
-        //     $lead->amo_status_id !== self::$STAGE_SUCCESS_ID
-        // ) {
+            if (!!$lead && !$lead->is_mortgage) {
+                dump('Basic Lead is found'); //DELETE
+                $mortgageLead = $lead->lead;
+                // dump(__METHOD__, $mortgageLead); //DELETE
 
-        // } else { //DELETE
-        //     dump('Basic Lead is closed'); //DELETE
-        // }
+                if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
+                    dump('Mortgage Lead is found'); //DELETE
+                    $amoMortgageLead = self::fetchLeadById($mortgageLead->amo_id);
+                    return self::mortgageExist($amoMortgageLead);
+                }
 
-        $lead = self::whereAmoId($params['lead_amo_id'])->first();
-        // dump(__METHOD__, $lead); //DELETE
-
-        if (!!$lead && !$lead->is_mortgage) {
-            dump('Basic Lead is found'); //DELETE
-            $mortgageLead = $lead->lead;
-            // dump(__METHOD__, $mortgageLead); //DELETE
-
-            if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
-                dump('Mortgage Lead is found'); //DELETE
-                $amoMortgageLead = self::fetchLeadById($mortgageLead->amo_id);
-                return self::mortgageExist($amoMortgageLead);
+                return null;
             }
 
-            return null;
+            dump('Basic Lead not Found'); //DELETE
+            return self::mortgageNotExist();
         }
 
-        dump('Basic Lead not Found'); //DELETE
-        return self::mortgageNotExist();
+        dump('Basic Lead is closed'); //DELETE
+        return null;
 
         // self::initStatic($params);
 
