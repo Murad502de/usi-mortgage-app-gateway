@@ -27,8 +27,6 @@ class LeadController extends Controller
         }
 
         return response()->json(['message' => 'success by create', 'lead' => $leadId], Response::HTTP_OK);
-
-        // return response()->json(['message' => 'success by create'], Response::HTTP_OK); //DELETE
     }
     public function get(Lead $lead): LeadResource
     {
