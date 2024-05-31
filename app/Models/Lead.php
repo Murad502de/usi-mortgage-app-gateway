@@ -218,7 +218,8 @@ class Lead extends Model
     }
     public static function prepareMortgageLeadData(): array
     {
-        $customFields = self::$AMO_API->parseCustomFields(self::$BASIC_LEAD['custom_fields_values'], self::$EXCLUDE_CF);
+        $cf = self::$BASIC_LEAD['custom_fields_values'] ?? [];
+        $customFields = self::$AMO_API->parseCustomFields($cf, self::$EXCLUDE_CF);
         $pipelineId   = (int) self::parseMortgagePipelineId();
         $statusId     = (int) self::parseMortgageCreationStatusId();
 
