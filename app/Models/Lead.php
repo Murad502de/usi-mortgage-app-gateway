@@ -58,43 +58,30 @@ class Lead extends Model
         Log::info(__METHOD__); //DELETE
         self::initStatic($params);
 
-        if (
-            self::$BASIC_LEAD['status_id'] !== self::$STAGE_LOSS_ID &&
-            self::$BASIC_LEAD['status_id'] !== self::$STAGE_SUCCESS_ID
-        ) {
-            $lead = self::whereAmoId($params['lead_amo_id'])->first();
+        $lead = self::whereAmoId($params['lead_amo_id'])->first();
 
-            if (!!$lead && !$lead->is_mortgage) {
-                $mortgageLead = $lead->lead;
+        if (!!$lead && !$lead->is_mortgage) {
+            $mortgageLead = $lead->lead;
 
-                if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
-                    $amoMortgageLead = self::fetchLeadById($mortgageLead->amo_id);
-                    return self::mortgageExist($amoMortgageLead);
-                }
-
-                Log::error(__METHOD__ . ' Mortgage Lead not found for: ' . self::$BASIC_LEAD['id']); //DELETE
-                return null;
+            if (!!$mortgageLead && !!$mortgageLead->is_mortgage) {
+                $amoMortgageLead = self::fetchLeadById($mortgageLead->amo_id);
+                return self::mortgageExist($amoMortgageLead);
             }
 
-            Log::info(__METHOD__ . ' Basic Lead not Found: ' . self::$BASIC_LEAD['id']); //DELETE
-            return self::mortgageNotExist();
+            Log::error(__METHOD__ . ' Mortgage Lead not found for: ' . self::$BASIC_LEAD['id']); //DELETE
+            return null;
         }
 
-        Log::error(__METHOD__ . ' Basic Lead is closed: ' . self::$BASIC_LEAD['id']); //DELETE
-        return null;
+        Log::info(__METHOD__ . ' Basic Lead not Found: ' . self::$BASIC_LEAD['id']); //DELETE
+        return self::mortgageNotExist();
 
-        // self::initStatic($params);
+        // if (
+        //     self::$BASIC_LEAD['status_id'] !== self::$STAGE_LOSS_ID &&
+        //     self::$BASIC_LEAD['status_id'] !== self::$STAGE_SUCCESS_ID
+        // ) {}
 
-        // $contact          = self::parseMainContact(self::$BASIC_LEAD);
-        // $mainContact      = self::fetchContactById($contact['id']);
-        // $mainContactLeads = self::filterMainContactLeadsById($mainContact['_embedded']['leads'], $params['lead_amo_id']);
-        // $mortgageLead     = self::parseMortgageLead($mainContactLeads);
-
-        // if ($mortgageLead) {
-        //     return self::mortgageExist($mortgageLead);
-        // }
-
-        // return self::mortgageNotExist();
+        // Log::error(__METHOD__ . ' Basic Lead is closed: ' . self::$BASIC_LEAD['id']); //DELETE
+        // return null;
     }
     public function updateLead(array $lead)
     {
